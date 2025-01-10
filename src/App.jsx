@@ -5,7 +5,7 @@ import './App.css'
 import Players from "./Components/Players.jsx"
 
 export default function App() {
-  const [inputValue, setInputValue] = useState("Kobe Bryant")
+  const [inputValue, setInputValue] = useState("")
   const [seasonList, setSeasonList] = useState([])
   const [seasonChosen, setSeasonChosen] = useState("")
   const [playersShownList, setPlayersShownList] = useState([])
@@ -62,6 +62,8 @@ export default function App() {
             <h1>NBA HEAD-2-HEAD</h1>
           </header>
           
+          <h3 className="instructions">choose a player, confirm him, and then specify a season</h3>
+
           <form onSubmit={choosePlayer}>
             <input
               type="text"
@@ -73,11 +75,11 @@ export default function App() {
               name="player"
             />
 
-            <button type="submit">Choose Player</button>
+            <button type="submit" className="red">Choose Player</button>
 
-            <select value={seasonChosen} onChange={chooseSeason}>
+            <select value={seasonChosen} onChange={chooseSeason} className="red">
               <option value="" disabled>
-                Select a season
+                Select season
               </option>
               {seasonList.map((season, index) => (
                 <option key={index} value={season}>
