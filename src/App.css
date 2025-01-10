@@ -27,7 +27,7 @@ header h1 {
 }
 
 .instructions{
-    color: #C8102E;
+    color: #1D428A;
     font-size: 16px;
     margin-bottom: 0;
     margin-top: 30px;
@@ -73,3 +73,40 @@ form input:focus {
     border: 0;
     cursor: pointer;
 }
+
+.grid-container {
+    display: grid;
+    gap: 0px;
+    border: 0;
+    border-radius: 110px;
+    margin: 40px 30px;
+  }
+  
+  .grid-header {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* Adjust based on attributesToShow */
+    background-color: #1D428A;
+    color: #D9D9D9;
+    font-weight: bold;
+    padding: 10px;
+    margin-bottom: 0;
+  }
+  
+  .grid-header-cell {
+    text-align: center;
+  }
+  
+  .grid-row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* Adjust based on attributesToShow */
+    padding: 10px;
+    border-bottom: 0;
+    background-color: #D9D9D9;
+    color: #1D428A;
+    margin-top: 0;
+  }
+  
+  .grid-cell {
+    text-align: center;
+  }
+  

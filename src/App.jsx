@@ -9,13 +9,15 @@ export default function App() {
   const [seasonList, setSeasonList] = useState([])
   const [seasonChosen, setSeasonChosen] = useState("")
   const [playersShownList, setPlayersShownList] = useState([])
+  const [attributes, setAttributes] = useState(["playerName", "season", "age", "team", "position", "points", "assists", "steals", "blocks", "totalRb", "fieldPercent", "threePercent"])
+  const [header, setHeader] = useState(["name", "season", "age", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
 
   // aPI used: https://documenter.getpostman.com/view/24232555/2s93shzpR3#view-the-new-and-updated-rest-api-here
   // under "GET NEW Player Search"
   const choosePlayer = (event) => { 
     event.preventDefault() // Prevent the form from submitting and refreshing the page
     setSeasonList([])
-    fetch(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataAdvanced/name/${inputValue}`)
+    fetch(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${inputValue}`)
       // ^ this is the API call copy-pasted... the $ and {} indicate that these values change depending on the player inputted
       .then((res) => res.json()) // get the results under the variable name "res" and turn it into a json object
       .then((result) => { // the actual object that we can work with
@@ -29,7 +31,7 @@ export default function App() {
     event.preventDefault() // Prevent the form from submitting and refreshing the page
     setSeasonChosen(event.target.value) // Update state when an option is selected
 
-    fetch(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataAdvanced/name/${inputValue}`)
+    fetch(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${inputValue}`)
     // ^ this is the API call copy-pasted... the $ and {} indicate that these values change depending on the player inputted
     .then((res) => res.json()) // get the results under the variable name "res" and turn it into a json object
     .then((result) => { // the actual object that we can work with
@@ -48,7 +50,7 @@ export default function App() {
             }
             return prev; // Return the same list if already included
           });
-          console.log(result[i].season)
+          console.log(result[i].minutesPg)
           break
         }
       }
@@ -91,7 +93,7 @@ export default function App() {
 
         {playersShownList.length > 0 && 
             <Players
-            playersShownList={playersShownList} 
+            playersShownList={playersShownList} attributes={attributes} header={header}
             />
         }
 

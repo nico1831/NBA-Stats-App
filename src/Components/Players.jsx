@@ -1,28 +1,31 @@
+import '.././App.css'
+import { useState } from 'react'
+
 export default function Players(props) { {/*syntax: note how props always has to be a parameter of the function when used*/}
-    {/*
-    - calls props.playerList (again, props just takes value from parent file and uses it in child component)
-    - maps through the ingredients array making them all appear as lists like in html
-    - for more info on mapping, just search it up*/}
-    const playerListItems = props.playersShownList.map(player => (
-        <>
-            <p>{player.playerName}</p>
-            <p>{player.position}</p>
-            <p>{player.age}</p>
-        </>
-    ))
+
     return (
-        <section>
-            {playerListItems} {/*placing the list items in the variable ingredientsListItems into this unordered list*/}
-        </section>
+        <div className="grid-container">
+
+            {/* Table Header */}
+            <div className="grid-header">
+            {props.header.map((headerElement, index) => (
+                <div key={index} className="grid-header-cell">
+                    {headerElement}
+                </div>
+            ))}
+            </div>
+    
+            {/* Table Rows */}
+            {props.playersShownList.map((item, rowIndex) => (
+            <div key={rowIndex} className="grid-row">
+                {props.attributes.map((attribute, colIndex) => (
+                <div key={colIndex} className="grid-cell">
+                    {item[attribute]} {/* Dynamically show the specified attribute */}
+                </div>
+                ))}
+            </div>
+            ))}
+
+        </div>
     )
 }
-
-/*
-points
-assists
-steals 
-blocks
-totalRb
-fieldPercent * 100
-threePercent * 100
-*/
