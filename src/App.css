@@ -90,6 +90,7 @@ form input:focus {
     font-weight: bold;
     padding: 10px;
     margin-bottom: 0;
+    font-size: 0.9rem;
   }
   
   .grid-header-cell {
@@ -109,4 +110,42 @@ form input:focus {
   .grid-cell {
     text-align: center;
   }
-  
+
+  .rank-button-container{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 4px;
+    width: 320px;
+    background-color: #C8102E;
+    color: #D9D9D9;
+    margin: 40px auto; /*40px top and bottom; auto for left andd right to make it center*/
+    border-radius: 20px;
+    padding: 0 20px;
+  }
+
+  .rank-button-container p{
+    margin-top: 15px;
+    text-transform: uppercase; /* Make text uppercase (optional) */
+  }
+
+  .rank-button-container select{
+    background-color: #D9D9D9;
+    color: #C8102E;
+    border: 0;
+    margin: 0;
+    height: 25px;
+    padding: 0 5px;
+    margin-top: 11px;
+    text-transform: uppercase; /* Make text uppercase (optional) */
+    /* width: 105px; */
+    text-align: center;
+  }
+
+  .rank-button-container select:focus {
+    border: none; /* Remove border when focused */
+    outline: none; /* Optional: Remove default focus outline */
+    margin: 0;
+    margin-top: 11px;
+  }
+    

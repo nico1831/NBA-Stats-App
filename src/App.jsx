@@ -5,12 +5,16 @@ import './App.css'
 import Players from "./Components/Players.jsx"
 
 export default function App() {
+  const dropdownAttributesList = ["season", "points", "assists", "steals", "blocks", "totalRb", "fieldPercent", "threePercent"]
+
   const [inputValue, setInputValue] = useState("")
   const [seasonList, setSeasonList] = useState([])
   const [seasonChosen, setSeasonChosen] = useState("")
   const [playersShownList, setPlayersShownList] = useState([])
   const [attributes, setAttributes] = useState(["playerName", "season", "age", "team", "position", "points", "assists", "steals", "blocks", "totalRb", "fieldPercent", "threePercent"])
   const [header, setHeader] = useState(["name", "season", "age", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
+  const [rankIsClicked, setRankIsClicked] = useState(false)
+  const [attributeChosen, setAttributeChosen] = useState("")
 
   // aPI used: https://documenter.getpostman.com/view/24232555/2s93shzpR3#view-the-new-and-updated-rest-api-here
   // under "GET NEW Player Search"
@@ -50,12 +54,23 @@ export default function App() {
             }
             return prev; // Return the same list if already included
           });
-          console.log(result[i].minutesPg)
           break
         }
       }
     })
+  }
+
+  const handleRanking = (event) => {
+    event.preventDefault() // Prevent the form from submitting and refreshing the page
+    setRankIsClicked(true)
+    setAttributeChosen(event.target.value)
+    setPlayersShownList(prev => [...prev].sort((a, b) => b[event.target.value] - a[event.target.value])); // ask chatgpt how this works ((1) prev and (2) how the sorting works)    
   };
+
+  // async function rank() { 
+  //   setRankIsClicked(true)
+  //   setPlayersShownList(prev => [...prev].sort((a, b) => b[attributeChosen] - a[attributeChosen])); // ask chatgpt how this works ((1) prev and (2) how the sorting works)
+  // }
 
   return (
     <>
@@ -77,7 +92,7 @@ export default function App() {
               name="player"
             />
 
-            <button type="submit" className="red">Choose Player</button>
+            <button type="submit" className="red">CHOOSE PLAYER</button>
 
             <select value={seasonChosen} onChange={chooseSeason} className="red">
               <option value="" disabled>
@@ -92,9 +107,26 @@ export default function App() {
           </form>
 
         {playersShownList.length > 0 && 
-            <Players
+          <Players
             playersShownList={playersShownList} attributes={attributes} header={header}
-            />
+          />
+        }
+
+        {playersShownList.length > 1 && 
+          <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 ingredients*/}
+              <p>rank players by</p>
+              <select value={attributeChosen} onChange={handleRanking} className="red">
+                  <option value="" disabled>
+                      (choose)
+                  </option>
+                  {dropdownAttributesList.map((attribute, index) => (
+                      <option key={index} value={attribute}>
+                      {attribute}
+                      </option>
+                  ))}
+              </select>
+              {/* <button onClick={props.rank}>stats</button> once this button is clicked, getRecipe from parent file is called (getRecipe takes in the ingredients array and sends them to the AI to make a recipe) */}
+          </div>
         }
 
         </main>

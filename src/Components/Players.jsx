@@ -1,5 +1,4 @@
 import '.././App.css'
-import { useState } from 'react'
 
 export default function Players(props) { {/*syntax: note how props always has to be a parameter of the function when used*/}
 
