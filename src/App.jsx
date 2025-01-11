@@ -67,6 +67,26 @@ export default function App() {
     setPlayersShownList(prev => [...prev].sort((a, b) => b[event.target.value] - a[event.target.value])); // ask chatgpt how this works ((1) prev and (2) how the sorting works)    
   };
 
+
+
+  const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
+  const handleToggle = (index) => {
+    if (selectedToDelete.includes(index)) {
+      // If the option is already selected, remove it
+      setSelectedToDelete(selectedToDelete.filter((item) => item !== index));
+    } else {
+      // If the option is not selected, add it
+      setSelectedToDelete([...selectedToDelete, index]);
+    }
+  }
+
+  const deletePlayer = (selectedToDelete) => {
+    setPlayersShownList((prev) =>
+      prev.filter((_, index) => !selectedToDelete.includes(index))
+    )
+    setSelectedToDelete([])
+  }
+
   return (
     <>
       <main> 
@@ -101,7 +121,9 @@ export default function App() {
                   ))}
                 </select>
               </form>
-
+            </div>
+            
+            <div className="second-row-btns">
               {playersShownList.length > 1 && 
                 <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 ingredients*/}
                     <p>rank players by</p>
@@ -117,12 +139,37 @@ export default function App() {
                     </select>
                 </div>
               }
+
+              {playersShownList.length > 0 &&
+                <button onClick={() => deletePlayer(selectedToDelete)}>DELETE</button>
+              }
             </div>
 
             {playersShownList.length > 0 && 
-            <Players
-              playersShownList={playersShownList} attributes={attributes} header={header}
-            />
+            <>
+              <div className="checkbox-and-grid">
+                <div className="checkbox-buttons-container">
+                  {playersShownList.map((player, index) => (
+                    <button
+                      key={index}
+                      className={`checkbox-button ${selectedToDelete.includes(index) ? 'checked' : ''}`}
+                      onClick={() => handleToggle(index)}
+                    >
+                      {index}
+                    </button>
+                  ))}
+                </div>
+                <Players
+                  playersShownList={playersShownList} attributes={attributes} header={header}
+                />
+              </div>
+
+
+              
+              {/* Display the selected options */}
+              <p>Selected Options: {selectedToDelete.join(', ') || 'None'}</p>
+
+            </>
             }
           </div>
         </main>
