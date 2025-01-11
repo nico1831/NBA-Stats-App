@@ -67,11 +67,6 @@ export default function App() {
     setPlayersShownList(prev => [...prev].sort((a, b) => b[event.target.value] - a[event.target.value])); // ask chatgpt how this works ((1) prev and (2) how the sorting works)    
   };
 
-  // async function rank() { 
-  //   setRankIsClicked(true)
-  //   setPlayersShownList(prev => [...prev].sort((a, b) => b[attributeChosen] - a[attributeChosen])); // ask chatgpt how this works ((1) prev and (2) how the sorting works)
-  // }
-
   return (
     <>
       <main> 
@@ -79,56 +74,57 @@ export default function App() {
             <h1>NBA HEAD-2-HEAD</h1>
           </header>
           
-          <h3 className="instructions">choose a player, confirm him, and then specify a season</h3>
+          <div className="not-header">
+            <h3 className="instructions">choose a player, confirm, specify a season, and rank by stat</h3>
+            <div className="input-row">
+              <form onSubmit={choosePlayer}>
+                <input
+                  type="text"
+                  value={inputValue} // Controlled input (React state controls the value...This means that the value of the input field is controlled by React state, rather than the DOM.... always just include this ... no need to really know what it does)
+                  onChange={(e) => 
+                    setInputValue(e.target.value)
+                  } // Update state of inputValue whenever input changes (note difference of onSubmit (when button is submitted) and onChange (if anything changes in input box))
+                  placeholder="Enter player name"
+                  name="player"
+                />
 
-          <form onSubmit={choosePlayer}>
-            <input
-              type="text"
-              value={inputValue} // Controlled input (React state controls the value...This means that the value of the input field is controlled by React state, rather than the DOM.... always just include this ... no need to really know what it does)
-              onChange={(e) => 
-                setInputValue(e.target.value)
-              } // Update state of inputValue whenever input changes (note difference of onSubmit (when button is submitted) and onChange (if anything changes in input box))
-              placeholder="Enter player name"
-              name="player"
-            />
+                <button type="submit" className="red">CHOOSE PLAYER</button>
 
-            <button type="submit" className="red">CHOOSE PLAYER</button>
-
-            <select value={seasonChosen} onChange={chooseSeason} className="red">
-              <option value="" disabled>
-                Select season
-              </option>
-              {seasonList.map((season, index) => (
-                <option key={index} value={season}>
-                  {season}
-                </option>
-              ))}
-            </select>
-          </form>
-
-        {playersShownList.length > 0 && 
-          <Players
-            playersShownList={playersShownList} attributes={attributes} header={header}
-          />
-        }
-
-        {playersShownList.length > 1 && 
-          <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 ingredients*/}
-              <p>rank players by</p>
-              <select value={attributeChosen} onChange={handleRanking} className="red">
+                <select value={seasonChosen} onChange={chooseSeason} className="red">
                   <option value="" disabled>
-                      (choose)
+                    Select season
                   </option>
-                  {dropdownAttributesList.map((attribute, index) => (
-                      <option key={index} value={attribute}>
-                      {attribute}
-                      </option>
+                  {seasonList.map((season, index) => (
+                    <option key={index} value={season}>
+                      {season}
+                    </option>
                   ))}
-              </select>
-              {/* <button onClick={props.rank}>stats</button> once this button is clicked, getRecipe from parent file is called (getRecipe takes in the ingredients array and sends them to the AI to make a recipe) */}
-          </div>
-        }
+                </select>
+              </form>
 
+              {playersShownList.length > 1 && 
+                <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 ingredients*/}
+                    <p>rank players by</p>
+                    <select value={attributeChosen} onChange={handleRanking} className="red">
+                        <option value="" disabled>
+                            (choose)
+                        </option>
+                        {dropdownAttributesList.map((attribute, index) => (
+                            <option key={index} value={attribute}>
+                            {attribute}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+              }
+            </div>
+
+            {playersShownList.length > 0 && 
+            <Players
+              playersShownList={playersShownList} attributes={attributes} header={header}
+            />
+            }
+          </div>
         </main>
     </>
   )
