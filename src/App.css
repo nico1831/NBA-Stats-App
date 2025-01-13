@@ -147,7 +147,7 @@ form input:focus {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 3px;
+  gap: 0px;
   text-align: center;
   margin: 0;
 }
@@ -155,19 +155,31 @@ form input:focus {
 .checkbox-buttons-container{
   display: flex;
   flex-direction: column;
-  gap: 17px;
-  padding-top: 30px;
+  gap: 18px;
+  padding-top: 37px;
+}
+
+.checkbox-button{
+  width: 20px;
+  height: 20px;
+  border: 1px solid #1D428A;
+  /* border-radius: 50%; */
+  background-color: white;
+  border-right: 0;
+}
+
+.checked{
+  background-color: #1D428A;
 }
 
 .scrollable-container {
   overflow-x: auto; /* Enables horizontal scrolling */
   overflow-y: hidden; /* No vertical scrolling */
-  width: 100%; /* Full width */
 }
 
 .grid-container {
     text-align: center;
-    width: max-content; /* Ensure grid takes up only as much width as needed (added to make scroll bar when no space) */
+    width: 1250px; /* Ensure grid takes up only as much width as needed (added to make scroll bar when no space) */
     display: grid;
     gap: 0px;
     border: 0;
@@ -201,5 +213,14 @@ form input:focus {
   }
   
   .grid-cell {
+    margin: auto; /*added this to keep content inside cells at the center (since font size of player nme is smaller, this is necessary)*/
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100px; /* Adjust to fit the container */
+  }
+
+  .player-name{
+    font-size: 13px;
   }

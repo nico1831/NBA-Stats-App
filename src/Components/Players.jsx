@@ -19,7 +19,10 @@ export default function Players(props) { {/*syntax: note how props always has to
                 {props.playersShownList.map((item, rowIndex) => (
                 <div key={rowIndex} className="grid-row">
                     {props.attributes.map((attribute, colIndex) => (
-                    <div key={colIndex} className="grid-cell">
+                    <div 
+                        key={colIndex} 
+                        className={`grid-cell ${attribute=="playerName" ? 'player-name' : ''}`}
+                    >
                         {item[attribute]} {/* Dynamically show the specified attribute */}
                     </div>
                     ))}

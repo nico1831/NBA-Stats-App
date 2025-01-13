@@ -154,21 +154,13 @@ export default function App() {
                       key={index}
                       className={`checkbox-button ${selectedToDelete.includes(index) ? 'checked' : ''}`}
                       onClick={() => handleToggle(index)}
-                    >
-                      {index}
-                    </button>
+                    ></button>
                   ))}
                 </div>
                 <Players
                   playersShownList={playersShownList} attributes={attributes} header={header}
                 />
               </div>
-
-
-              
-              {/* Display the selected options */}
-              <p>Selected Options: {selectedToDelete.join(', ') || 'None'}</p>
-
             </>
             }
           </div>
