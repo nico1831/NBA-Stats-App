@@ -1,10 +1,14 @@
-// see bottom of code to know what the API returns
-
 import { useState } from 'react'
 import './App.css'
 import Players from "./Components/Players.jsx"
 
 export default function App() {
+
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
   const dropdownAttributesList = ["season", "points", "assists", "steals", "blocks", "totalRb", "fieldPercent", "threePercent"]
 
   const [inputValue, setInputValue] = useState("")
@@ -16,29 +20,40 @@ export default function App() {
   const [rankIsClicked, setRankIsClicked] = useState(false)
   const [attributeChosen, setAttributeChosen] = useState("")
 
-  // aPI used: https://documenter.getpostman.com/view/24232555/2s93shzpR3#view-the-new-and-updated-rest-api-here
+  let endpoint = `api/PlayerDataAdvancedPlayoffs/name/${inputValue}`;
+
+  // API used: https://documenter.getpostman.com/view/24232555/2s93shzpR3#view-the-new-and-updated-rest-api-here
   // under "GET NEW Player Search"
   const choosePlayer = (event) => { 
     event.preventDefault() // Prevent the form from submitting and refreshing the page
     setSeasonList([])
-    fetch(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${inputValue}`)
+
+    fetch(`https://nba-stats-db.herokuapp.com/api/playerdata/name/${inputValue}`, requestOptions) // Makes a GET request to the backend server using the Fetch API. This line returns a Promise, so it must be followed by .then().
       // ^ this is the API call copy-pasted... the $ and {} indicate that these values change depending on the player inputted
-      .then((res) => res.json()) // get the results under the variable name "res" and turn it into a json object
-      .then((result) => { // the actual object that we can work with
+
+      // .then((response) => response.json()) // get the results under the variable name "res" and turn it into a json object
+      .then(async (response) => {
+          const text = await response.text(); // read raw text
+          console.log("Raw response:", text); // see what the server actually returns
+          return JSON.parse(text); // try parsing manually, or adjust depending on what `text` is
+        })
+
+      .then((result) => { // result is now the actual data — likely an array of player stats.
         for(let i=0; i<result.length; i++){
-          setSeasonList((prev) => [...prev, result[i].season]);
+          setSeasonList((prev) => [...prev, result[i].season]); // setting SeasonList to be an array of all the seasons that the player has played (used in dropdown menu)
         }
       })
   }
 
+  // ask chatgpt to explain per line if needed
   const chooseSeason  = (event) => {
     event.preventDefault() // Prevent the form from submitting and refreshing the page
     setSeasonChosen(event.target.value) // Update state when an option is selected
 
-    fetch(`http://b8c40s8.143.198.70.30.sslip.io/api/PlayerDataTotals/name/${inputValue}`)
+    fetch(`https://nba-stats-db.herokuapp.com/api/playerdata/name/${inputValue}`, requestOptions)
     // ^ this is the API call copy-pasted... the $ and {} indicate that these values change depending on the player inputted
-    .then((res) => res.json()) // get the results under the variable name "res" and turn it into a json object
-    .then((result) => { // the actual object that we can work with
+    .then((response) => response.json()) // get the results under the variable name "res" and turn it into a json object
+    .then((result) => { // result is now the actual data — likely an array of player stats.
       for(let i=0; i<result.length; i++){
 
         // the setSeasonChosen(event.target.value) couple lines before is asynchrnous (meaning it certain tasks (like fetching data or updating state) are executed without blocking the main thread. This allows other code to continue running while waiting for those tasks to finish.
@@ -72,10 +87,10 @@ export default function App() {
   const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
   const handleToggle = (index) => {
     if (selectedToDelete.includes(index)) {
-      // If the option is already selected, remove it
+      // If the option is already selected, remove it.
       setSelectedToDelete(selectedToDelete.filter((item) => item !== index));
     } else {
-      // If the option is not selected, add it
+      // If the option is not selected, add it.
       setSelectedToDelete([...selectedToDelete, index]);
     }
   }
@@ -91,7 +106,7 @@ export default function App() {
     <>
       <main> 
           <header>
-            <h1>NBA HEAD-2-HEAD</h1>
+            <h1>NBA HEAD-2-HEAD</h1> 
           </header>
           
           <div className="not-header">
@@ -125,7 +140,7 @@ export default function App() {
             
             <div className="second-row-btns">
               {playersShownList.length > 1 && 
-                <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 ingredients*/}
+                <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 players shown*/}
                     <p>rank players by</p>
                     <select value={attributeChosen} onChange={handleRanking} className="red">
                         <option value="" disabled>
