@@ -26,10 +26,6 @@ header h1 {
     padding: 20px; /* Adds spacing inside the header */
 }
 
-.not-header{
-  padding: 10px;
-}
-
 .instructions{
     color: #1D428A;
     font-size: 16px;
@@ -38,13 +34,18 @@ header h1 {
 }
 
 .input-row{
-    margin: 10px auto;
+    margin: 10px 0;
     display: flex;
     gap: 5px;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap; /* Allows wrapping of child elements */
     text-align: center;
+}
+
+.input-row > * {
+  flex: 0 1 auto; /* allow shrinking and wrapping */
+  max-width: 100%; /* prevent overflow */
 }
 
 form{
@@ -81,44 +82,48 @@ form input:focus {
     font-family: "Graduate", serif;
     font-weight: 10;
     font-style: normal;
-    font-size: 16px;
+    font-size: clamp(14px, 3vw, 16px);
     border: 0;
     cursor: pointer;
+    white-space: normal; /* Allow text to wrap if needed */
+    overflow: hidden;    /* Hide overflow text */
+    text-overflow: ellipsis; /* Show "..." if text is cut off */
 }
 
 .second-row-btns{
   display: flex;
+  align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 5px;
 }
 
 .rank-button-container{
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 4px;
   width: 320px;
   height: 45px;
   background-color: #C8102E;
   color: #D9D9D9;
   border-radius: 20px;
-  padding: 1.2px 20px;
   margin: 0;
   font-size: 16px;
 }
 
 .rank-button-container p{
-  margin-top: 15px;
+  font-size: clamp(14px, 3vw, 16px);
   text-transform: uppercase; /* Make text uppercase (optional) */
+  white-space: normal; /* Allow text to wrap if needed */
+  text-overflow: ellipsis; /* Show "..." if text is cut off */
 }
 
 .rank-button-container select{
   background-color: #D9D9D9;
   color: #C8102E;
   border: 0;
-  margin: 0;
   height: 25px;
-  padding: 0 5px;
-  margin-top: 11px;
   text-transform: uppercase; /* Make text uppercase (optional) */
   text-align: center;
 }
@@ -135,7 +140,6 @@ select option {
   border: none; /* Remove border when focused */
   outline: none; /* Optional: Remove default focus outline */
   margin: 0;
-  margin-top: 11px;
 }
 
 .second-row-btns button{
@@ -151,33 +155,15 @@ select option {
   padding: 1.2px 20px;
 }
 
-.checkbox-and-grid{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0px;
-  text-align: center;
-  margin: 0;
-}
-
-.checkbox-buttons-container{
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding-top: 37px;
-}
-
 .checkbox-button{
   width: 20px;
   height: 20px;
   border: 1px solid #1D428A;
-  /* border-radius: 50%; */
   background-color: white;
-  border-right: 0;
 }
 
 .checked{
-  background-color: #1D428A;
+  background-color: yellow;
 }
 
 .scrollable-container {
@@ -185,50 +171,56 @@ select option {
   overflow-y: hidden; /* No vertical scrolling */
 }
 
-.grid-container {
-    text-align: center;
-    width: 1250px; /* Ensure grid takes up only as much width as needed (added to make scroll bar when no space) */
-    display: grid;
-    gap: 0px;
-    border: 0;
-    border-radius: 110px;
-    margin: 40px 0;
+table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: auto; /* auto = based on content, fixed = equal width */
+  max-width: 90%;
+  text-align: center;
+  margin: 20px auto;
 }
-  
-  .grid-header {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr); /* Adjust based on attributesToShow */
-    background-color: #1D428A;
-    color: #D9D9D9;
-    font-weight: bold;
-    padding: 10px;
-    margin-bottom: 0;
-    font-size: 0.9rem;
-  }
-  
-  .grid-header-cell {
-    text-align: center;
-  }
-  
-  .grid-row {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr); /* Adjust based on attributesToShow */
-    padding: 10px;
-    border-bottom: 0;
-    background-color: #D9D9D9;
-    color: #1D428A;
-    margin-top: 0;
-  }
-  
-  .grid-cell {
-    margin: auto; /*added this to keep content inside cells at the center (since font size of player nme is smaller, this is necessary)*/
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100px; /* Adjust to fit the container */
-  }
 
-  .player-name{
-    font-size: 13px;
-  }
+td {
+  padding: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+  white-space: nowrap;    /* or normal to wrap */
+  overflow: hidden;
+  text-overflow: ellipsis; /* "..." if cut off */
+}
+
+th{
+  padding: 10px 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+  white-space: nowrap;    /* or normal to wrap */
+  overflow: hidden;
+  text-overflow: ellipsis; /* "..." if cut off */
+}
+
+tr:nth-child(even) {
+  background-color: #1D428A;
+  color: #e0e0e0;
+}
+
+tr:hover {
+  background-color: #e0e0e0;
+}
+
+.delete-btn{
+  height: 45px;
+  background-color: #D9D9D9;
+  color: #C8102E;
+  border-radius: 20px;
+  border: 0;
+  font-family: "Graduate", serif;
+  font-weight: 10;
+  font-style: normal;
+  font-size: 16px;
+  padding: 1.2px 20px;
+}
+
+.highlighted {
+  background-color: rgba(255, 255, 0, 0.5);
+}

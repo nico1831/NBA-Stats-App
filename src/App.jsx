@@ -17,9 +17,10 @@ export default function App() {
   const [seasonChosen, setSeasonChosen] = useState("")
   const [playersShownList, setPlayersShownList] = useState([])
   const [attributes, setAttributes] = useState(["Name", "Season", "Team", "Position", "Points", "Assists", "Steals", "BlockedShots", "Rebounds", "FieldGoalsPercentage", "ThreePointersPercentage"])
-  const [header, setHeader] = useState(["name", "season", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
+  const [header, setHeader] = useState(["select", "name", "season", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
   const [rankIsClicked, setRankIsClicked] = useState(false)
   const [attributeChosen, setAttributeChosen] = useState("")
+  const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
 
 
   // API used: https://sportsdata.io/developers/api-documentation/nba#teams-players-rosters
@@ -73,8 +74,6 @@ export default function App() {
         : (b[event.target.value] - (a[event.target.value]))
     ))};
 
-
-  const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
   const handleToggle = (index) => {
     if (selectedToDelete.includes(index)) {
       // If the option is already selected, remove it.
@@ -99,33 +98,31 @@ export default function App() {
             <h1>NBA HEAD-2-HEAD</h1> 
           </header>
           
-          <div className="not-header">
+          <div>
             <h3 className="instructions">choose a player, specify a season, and rank by stat</h3>
-            <div className="input-row">
-              <form onSubmit={choosePlayerAndSeason}>
-                <input
-                  type="text"
-                  value={playerChosen} 
-                  onChange={(e) => 
-                    setPlayerChosen(e.target.value)
-                  } 
-                  placeholder="Enter player name"
-                  name="player"
-                />
+            <form onSubmit={choosePlayerAndSeason} className="input-row">
+              <input
+                type="text"
+                value={playerChosen} 
+                onChange={(e) => 
+                  setPlayerChosen(e.target.value)
+                } 
+                placeholder="Enter player name"
+                name="player"
+              />
 
-                <input
-                  type="text"
-                  value={seasonChosen}
-                  onChange={(e) => 
-                    setSeasonChosen(e.target.value)
-                  }
-                  placeholder="Enter season (e.g. 2020)"
-                  name="season"
-                />
+              <input
+                type="text"
+                value={seasonChosen}
+                onChange={(e) => 
+                  setSeasonChosen(e.target.value)
+                }
+                placeholder="Enter season (2024 or 2025 only)"
+                name="season"
+              />
 
-                <button type="submit" className="red">CHOOSE</button>
-              </form>
-            </div>
+              <button type="submit" className="red">CHOOSE</button>
+            </form>
             
             <div className="second-row-btns">
               {playersShownList.length > 1 && 
@@ -146,31 +143,21 @@ export default function App() {
                     </select>
                 </div>
               }
-
-              {playersShownList.length > 0 &&
-                <button onClick={() => deletePlayer(selectedToDelete)}>DELETE</button>
-              }
             </div>
 
             {playersShownList.length > 0 && 
             <>
-              <div className="checkbox-and-grid">
-                <div className="checkbox-buttons-container">
-                  {playersShownList.map((player, index) => (
-                    <button
-                      key={index}
-                      className={`checkbox-button ${selectedToDelete.includes(index) ? 'checked' : ''}`}
-                      onClick={() => handleToggle(index)}
-                    ></button>
-                  ))}
-                </div>
+              <div className="table-container">
                 <Players
-                  playersShownList={playersShownList} attributes={attributes} header={header}
+                  playersShownList={playersShownList} attributes={attributes} header={header} selectedToDelete={selectedToDelete} handleToggle={handleToggle} attributeChosen={attributeChosen} 
                 />
               </div>
             </>
             }
           </div>
+          {playersShownList.length > 0 &&
+            <button className="delete-btn" onClick={() => deletePlayer(selectedToDelete)}>DELETE</button>
+          }
         </main>
     </>
   )

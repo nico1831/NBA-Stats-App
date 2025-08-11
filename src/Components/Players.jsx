@@ -4,34 +4,41 @@ export default function Players(props) { {/*syntax: note how props always has to
 
     return (
         <div className="scrollable-container">
-            <div className="grid-container">
+            <table>
 
                 {/* Table Header */}
-                <div className="grid-header">
+                <tr>
                 {props.header.map((headerElement, index) => (
-                    <div key={index} className="grid-header-cell">
+                    <th className={`${props.attributeChosen.toLowerCase() === headerElement  ? 'highlighted' : ''}`}>
                         {headerElement}
-                    </div>
+                    </th>
                 ))}
-                </div>
+                </tr>
         
                 {/* Table Rows */}
                 {props.playersShownList.map((item, rowIndex) => (
-                <div key={rowIndex} className="grid-row">
+                <tr key={rowIndex} className="grid-row">
+                    <td>
+                        <button
+                            key={rowIndex}
+                            className={`checkbox-button ${props.selectedToDelete.includes(rowIndex) ? 'checked' : ''}`}
+                            onClick={() => props.handleToggle(rowIndex)}
+                        ></button>
+                    </td>
                     {props.attributes.map((attribute, colIndex) => (
-                    <div 
+                    <td 
                         key={colIndex} 
-                        className={`grid-cell ${attribute=="playerName" ? 'player-name' : ''}`}
+                        className={`grid-cell ${attribute=="playerName" ? 'player-name' : ''} ${props.attributeChosen === attribute ? 'highlighted' : ''}`}
                     >
                         {attribute === "Points" || attribute === "Assists" || attribute === "Steals" || attribute === "BlockedShots" || attribute === "Rebounds" 
                             ? (item[attribute] / item.Games).toFixed(2)
                             : item[attribute]} {/* Dynamically show the specified attribute */}
 
-                    </div>
+                    </td>
                     ))}
-                </div>
+                </tr>
                 ))}
-            </div>
+            </table>
         </div>
     )
 }
