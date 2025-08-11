@@ -123,6 +123,14 @@ form input:focus {
   text-align: center;
 }
 
+select,
+select option {
+    font-family: "Graduate", serif;
+    font-weight: 10;
+    font-style: normal;
+    font-size: 16px;
+}
+
 .rank-button-container select:focus {
   border: none; /* Remove border when focused */
   outline: none; /* Optional: Remove default focus outline */
