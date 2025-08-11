@@ -8,12 +8,16 @@ export default function Players(props) { {/*syntax: note how props always has to
 
                 {/* Table Header */}
                 <tr>
-                {props.header.map((headerElement, index) => (
-                    <th className={`${props.attributeChosen.toLowerCase() === headerElement  ? 'highlighted' : ''}`}>
-                        {headerElement}
-                    </th>
-                ))}
+                    {Object.entries(props.header).map(([display, attribute], index) => (
+                        <th
+                        key={index}
+                        className={props.attributeChosen.toLowerCase() === attribute.toLowerCase() ? 'highlighted' : ''}
+                        >
+                        {display}
+                        </th>
+                    ))}
                 </tr>
+
         
                 {/* Table Rows */}
                 {props.playersShownList.map((item, rowIndex) => (

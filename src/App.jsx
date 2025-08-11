@@ -17,7 +17,20 @@ export default function App() {
   const [seasonChosen, setSeasonChosen] = useState("")
   const [playersShownList, setPlayersShownList] = useState([])
   const [attributes, setAttributes] = useState(["Name", "Season", "Team", "Position", "Points", "Assists", "Steals", "BlockedShots", "Rebounds", "FieldGoalsPercentage", "ThreePointersPercentage"])
-  const [header, setHeader] = useState(["select", "name", "season", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
+  const [header, setHeader] = useState({
+    "Select": "Select",
+    "Name": "Name",
+    "Season": "Season",
+    "Team": "Team",
+    "Position": "Position",
+    "Points": "Points",
+    "Assists": "Assists",
+    "Steals": "Steals",
+    "Blocks": "BlockedShots",
+    "Rebounds": "Rebounds",
+    "FG %": "FieldGoalsPercentage",
+    "3-pt %": "ThreePointersPercentage"
+  })
   const [rankIsClicked, setRankIsClicked] = useState(false)
   const [attributeChosen, setAttributeChosen] = useState("")
   const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
@@ -42,16 +55,32 @@ export default function App() {
               .then(response2 => response2.json())
               .then(data2 => {
                 console.log("Player Data:", data2);
-                setPlayersShownList(prev =>
-                  data2 && data2.PlayerID && data2.Season // Check if player exists and has required properties
-                    ? prev.some(player =>
-                        player.PlayerID === data2.PlayerID &&
-                        player.Season === data2.Season
-                      )
-                      ? prev
-                      : [...prev, data2]
-                    : prev // If data2 is invalid, don't add anything
-                );
+                if (data2 && data2.PlayerID && data2.Season) {
+                  setPlayersShownList(prev => {
+                    // If already in list, just return prev
+                    if (prev.some(p => p.PlayerID === data2.PlayerID && p.Season === data2.Season)) {
+                      return prev;
+                    }
+
+                    // Add the new player
+                    const updated = [...prev, data2];
+
+                    // Sort if attributeChosen is set
+                    if (attributeChosen) {
+                      const perGameAttrs = ["Points", "Assists", "Steals", "BlockedShots", "Rebounds"];
+                      const isPerGame = perGameAttrs.includes(attributeChosen);
+
+                      return [...updated].sort((a, b) =>
+                        isPerGame
+                          ? (b[attributeChosen] / b.Games) - (a[attributeChosen] / a.Games)
+                          : (b[attributeChosen] - a[attributeChosen])
+                      );
+                    }
+
+                    return updated; // No sort yet
+                  });
+                }
+
             });
 
           }
@@ -65,14 +94,22 @@ export default function App() {
 
 
   const handleRanking = (event) => {
-    event.preventDefault() // Prevent the form from submitting and refreshing the page
-    setRankIsClicked(true)
-    setAttributeChosen(event.target.value)
-    setPlayersShownList(prev => [...prev].sort((a, b) => 
-      ["Points", "Assists", "Steals", "BlockedShots", "Rebounds"].includes(event.target.value)
-        ? (b[event.target.value] / b.Games - a[event.target.value] / a.Games) // Sort by the chosen attribute directly
-        : (b[event.target.value] - (a[event.target.value]))
-    ))};
+    let attribute = attributeChosen;
+
+    if (event?.target?.value) {
+      attribute = event.target.value;
+    }
+
+    setRankIsClicked(true);
+    setAttributeChosen(attribute);
+    setPlayersShownList(prev =>
+      [...prev].sort((a, b) =>
+        ["Points", "Assists", "Steals", "BlockedShots", "Rebounds"].includes(attribute)
+          ? (b[attribute] / b.Games - a[attribute] / a.Games)
+          : (b[attribute] - a[attribute])
+      )
+    );
+  };
 
   const handleToggle = (index) => {
     if (selectedToDelete.includes(index)) {
@@ -100,7 +137,11 @@ export default function App() {
           
           <div>
             <h3 className="instructions">choose a player, specify a season, and rank by stat</h3>
-            <form onSubmit={choosePlayerAndSeason} className="input-row">
+            <form   onSubmit={(e) => {
+              e.preventDefault(); // keep it from refreshing
+              choosePlayerAndSeason(e);
+              handleRanking();
+            }} className="input-row">
               <input
                 type="text"
                 value={playerChosen} 
