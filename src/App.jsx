@@ -1,3 +1,5 @@
+// !!!!!!!!!!! click this link eahc time before testing !!!!!!!!!!: https://cors-anywhere.herokuapp.com/corsdemo
+
 import { useState } from 'react'
 import './App.css'
 import Players from "./Components/Players.jsx"
@@ -9,79 +11,64 @@ export default function App() {
     redirect: 'follow'
   };
 
-  const dropdownAttributesList = ["season", "points", "assists", "steals", "blocks", "totalRb", "fieldPercent", "threePercent"]
+  const dropdownAttributesList = ["Points", "Assists", "Steals", "Blocks", "Rebounds", "FieldGoalsPercentage", "ThreePointersPercentage"]
 
-  const [inputValue, setInputValue] = useState("")
-  const [seasonList, setSeasonList] = useState([])
+  const [playerChosen, setPlayerChosen] = useState("")
   const [seasonChosen, setSeasonChosen] = useState("")
   const [playersShownList, setPlayersShownList] = useState([])
-  const [attributes, setAttributes] = useState(["playerName", "season", "age", "team", "position", "points", "assists", "steals", "blocks", "totalRb", "fieldPercent", "threePercent"])
-  const [header, setHeader] = useState(["name", "season", "age", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
+  const [attributes, setAttributes] = useState(["Name", "Season", "Team", "Position", "Points", "Assists", "Steals", "BlockedShots", "Rebounds", "FieldGoalsPercentage", "ThreePointersPercentage"])
+  const [header, setHeader] = useState(["name", "season", "team", "position", "points", "assists", "steals", "blocks", "rebounds", "fg%", "3-pt%"])
   const [rankIsClicked, setRankIsClicked] = useState(false)
   const [attributeChosen, setAttributeChosen] = useState("")
 
-  let endpoint = `api/PlayerDataAdvancedPlayoffs/name/${inputValue}`;
 
-  // API used: https://documenter.getpostman.com/view/24232555/2s93shzpR3#view-the-new-and-updated-rest-api-here
-  // under "GET NEW Player Search"
-  const choosePlayer = (event) => { 
-    event.preventDefault() // Prevent the form from submitting and refreshing the page
-    setSeasonList([])
+  // API used: https://sportsdata.io/developers/api-documentation/nba#teams-players-rosters
+  const choosePlayerAndSeason = async (event) => {
+    event.preventDefault();
+    const apiKey = "b8afd33ef5be49faaf74db4d74ec41fe";
 
-    fetch(`https://nba-stats-db.herokuapp.com/api/playerdata/name/${inputValue}`, requestOptions) // Makes a GET request to the backend server using the Fetch API. This line returns a Promise, so it must be followed by .then().
-      // ^ this is the API call copy-pasted... the $ and {} indicate that these values change depending on the player inputted
+    const arrayOfPlayersURL = `https://cors-anywhere.herokuapp.com/https://api.sportsdata.io/v3/nba/scores/json/Players?key=${apiKey}`;
 
-      // .then((response) => response.json()) // get the results under the variable name "res" and turn it into a json object
-      .then(async (response) => {
-          const text = await response.text(); // read raw text
-          console.log("Raw response:", text); // see what the server actually returns
-          return JSON.parse(text); // try parsing manually, or adjust depending on what `text` is
-        })
+    fetch(arrayOfPlayersURL)
+      .then(response => response.json())
+      .then(data => {
+        // data is an array/object of players
+        // console.log(data);
+        data.forEach(player => {
+          if( player.FirstName.toLowerCase() + ' ' + player.LastName.toLowerCase() === playerChosen.toLowerCase() ) {
+            const playerChosenURL = `https://cors-anywhere.herokuapp.com/https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStatsByPlayer/${seasonChosen}/${player.PlayerID}?key=${apiKey}`
+            fetch(playerChosenURL)
+              .then(response2 => response2.json())
+              .then(data2 => {
+                console.log("Player Data:", data2);
+                setPlayersShownList(prev =>
+                  data2 && data2.PlayerID && data2.Season // Check if player exists and has required properties
+                    ? prev.some(player =>
+                        player.PlayerID === data2.PlayerID &&
+                        player.Season === data2.Season
+                      )
+                      ? prev
+                      : [...prev, data2]
+                    : prev // If data2 is invalid, don't add anything
+                );
+            });
 
-      .then((result) => { // result is now the actual data — likely an array of player stats.
-        for(let i=0; i<result.length; i++){
-          setSeasonList((prev) => [...prev, result[i].season]); // setting SeasonList to be an array of all the seasons that the player has played (used in dropdown menu)
-        }
+          }
+        });
       })
-  }
+      .catch(error => {
+        console.error("Error fetching players:", error);
+      });
+  };
 
-  // ask chatgpt to explain per line if needed
-  const chooseSeason  = (event) => {
-    event.preventDefault() // Prevent the form from submitting and refreshing the page
-    setSeasonChosen(event.target.value) // Update state when an option is selected
 
-    fetch(`https://nba-stats-db.herokuapp.com/api/playerdata/name/${inputValue}`, requestOptions)
-    // ^ this is the API call copy-pasted... the $ and {} indicate that these values change depending on the player inputted
-    .then((response) => response.json()) // get the results under the variable name "res" and turn it into a json object
-    .then((result) => { // result is now the actual data — likely an array of player stats.
-      for(let i=0; i<result.length; i++){
-
-        // the setSeasonChosen(event.target.value) couple lines before is asynchrnous (meaning it certain tasks (like fetching data or updating state) are executed without blocking the main thread. This allows other code to continue running while waiting for those tasks to finish.
-        // In React, state updates (like setSeasonChosen) are asynchronous, meaning they don’t immediately update the value of seasonChosen. Instead, React schedules the update, and the value will be updated on the next render.)
-        // so, i directly access event.target.value
-        // it fixed this past issue: the problme is that whenever i choose a player and year the first time, nothing shows up. the 2nd time, the previous one I chose shows up. the third time, the 2nd one I chose shows up. so on. pls fix with minimal changes to code:
-        if(event.target.value == result[i].season){ 
-          // Check if the player is already in the list based on a unique property
-          // this block of code is needed to not have duplicate players displayed
-          setPlayersShownList((prev) => {
-            if (!prev.some((player) => player.id === result[i].id)) { // CONCEPT: The .some() method in JavaScript is an array method that checks whether at least one element in the array satisfies a given condition (a test implemented by a callback function). It returns true if the condition is met for any element, and false otherwise.
-              return [...prev, result[i]]; // Add only if not already in the list
-            }
-            return prev; // Return the same list if already included
-          });
-          break
-        }
-      }
-    })
-  }
 
   const handleRanking = (event) => {
     event.preventDefault() // Prevent the form from submitting and refreshing the page
     setRankIsClicked(true)
     setAttributeChosen(event.target.value)
-    setPlayersShownList(prev => [...prev].sort((a, b) => b[event.target.value] - a[event.target.value])); // ask chatgpt how this works ((1) prev and (2) how the sorting works)    
+    setPlayersShownList(prev => [...prev].sort((a, b) => (b[event.target.value] / b.Games) - (a[event.target.value] / a.Games))); // ask chatgpt how this works ((1) prev and (2) how the sorting works)    
   };
-
 
 
   const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
@@ -110,31 +97,30 @@ export default function App() {
           </header>
           
           <div className="not-header">
-            <h3 className="instructions">choose a player, confirm, specify a season, and rank by stat</h3>
+            <h3 className="instructions">choose a player, specify a season, and rank by stat</h3>
             <div className="input-row">
-              <form onSubmit={choosePlayer}>
+              <form onSubmit={choosePlayerAndSeason}>
                 <input
                   type="text"
-                  value={inputValue} // Controlled input (React state controls the value...This means that the value of the input field is controlled by React state, rather than the DOM.... always just include this ... no need to really know what it does)
+                  value={playerChosen} 
                   onChange={(e) => 
-                    setInputValue(e.target.value)
-                  } // Update state of inputValue whenever input changes (note difference of onSubmit (when button is submitted) and onChange (if anything changes in input box))
+                    setPlayerChosen(e.target.value)
+                  } 
                   placeholder="Enter player name"
                   name="player"
                 />
 
-                <button type="submit" className="red">CHOOSE PLAYER</button>
+                <input
+                  type="text"
+                  value={seasonChosen}
+                  onChange={(e) => 
+                    setSeasonChosen(e.target.value)
+                  }
+                  placeholder="Enter season (e.g. 2020)"
+                  name="season"
+                />
 
-                <select value={seasonChosen} onChange={chooseSeason} className="red">
-                  <option value="" disabled>
-                    Select season
-                  </option>
-                  {seasonList.map((season, index) => (
-                    <option key={index} value={season}>
-                      {season}
-                    </option>
-                  ))}
-                </select>
+                <button type="submit" className="red">CHOOSE</button>
               </form>
             </div>
             

@@ -23,7 +23,10 @@ export default function Players(props) { {/*syntax: note how props always has to
                         key={colIndex} 
                         className={`grid-cell ${attribute=="playerName" ? 'player-name' : ''}`}
                     >
-                        {item[attribute]} {/* Dynamically show the specified attribute */}
+                        {typeof item[attribute] === "number" && attribute !== "Season"
+                            ? (item[attribute] / item.Games).toFixed(2)
+                            : item[attribute]} {/* Dynamically show the specified attribute */}
+
                     </div>
                     ))}
                 </div>
