@@ -39,7 +39,7 @@ export default function App() {
   // API used: https://sportsdata.io/developers/api-documentation/nba#teams-players-rosters
   const choosePlayerAndSeason = async (event) => {
     event.preventDefault();
-    const proxy = "https://nba-stats-app-obyt.onrender.com"; // Proxy to avoid CORS issues
+    const proxy = "https://cors-anywhere-zja7.onrender.com"; // Proxy to avoid CORS issues
     const apiKey = "b8afd33ef5be49faaf74db4d74ec41fe";
 
     const arrayOfPlayersURL = `${proxy}/https://api.sportsdata.io/v3/nba/scores/json/Players?key=${apiKey}`;
