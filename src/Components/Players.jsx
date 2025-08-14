@@ -1,6 +1,6 @@
 import '.././App.css'
 
-export default function Players(props) { {/*syntax: note how props always has to be a parameter of the function when used*/}
+export default function Players(props) { 
 
     return (
         <div className="scrollable-container">

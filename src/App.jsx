@@ -1,5 +1,3 @@
-// !!!!!!!!!!! click this link eahc time before testing !!!!!!!!!!: https://cors-anywhere.herokuapp.com/corsdemo
-
 import { useState } from 'react'
 import './App.css'
 import Players from "./Components/Players.jsx"
@@ -33,7 +31,7 @@ export default function App() {
   })
   const [rankIsClicked, setRankIsClicked] = useState(false)
   const [attributeChosen, setAttributeChosen] = useState("")
-  const [selectedToDelete, setSelectedToDelete] = useState([]); // State to track selected buttons
+  const [selectedToDelete, setSelectedToDelete] = useState([]); 
 
 
   // API used: https://sportsdata.io/developers/api-documentation/nba#teams-players-rosters
@@ -47,8 +45,6 @@ export default function App() {
     fetch(arrayOfPlayersURL)
       .then(response => response.json())
       .then(data => {
-        // data is an array/object of players
-        // console.log(data);
         data.forEach(player => {
           if( player.FirstName.toLowerCase() + ' ' + player.LastName.toLowerCase() === playerChosen.toLowerCase() ) {
             const playerChosenURL = `${proxy}/https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStatsByPlayer/${seasonChosen}/${player.PlayerID}?key=${apiKey}`
@@ -168,7 +164,7 @@ export default function App() {
             
             <div className="second-row-btns">
               {playersShownList.length > 1 && 
-                <div className="rank-button-container"> {/*will only be given option to compare once there are more than 1 players shown*/}
+                <div className="rank-button-container"> 
                     <p>rank players by</p>
                     <select value={attributeChosen} onChange={handleRanking} className="red">
                         <option value="" disabled>
