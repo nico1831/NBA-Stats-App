@@ -51,7 +51,7 @@ export default function App() {
         // console.log(data);
         data.forEach(player => {
           if( player.FirstName.toLowerCase() + ' ' + player.LastName.toLowerCase() === playerChosen.toLowerCase() ) {
-            const playerChosenURL = `https://cors-anywhere.herokuapp.com/https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStatsByPlayer/${seasonChosen}/${player.PlayerID}?key=${apiKey}`
+            const playerChosenURL = `${proxy}/https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStatsByPlayer/${seasonChosen}/${player.PlayerID}?key=${apiKey}`
             fetch(playerChosenURL)
               .then(response2 => response2.json())
               .then(data2 => {
